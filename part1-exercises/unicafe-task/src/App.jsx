@@ -96,21 +96,39 @@ import {useState} from 'react'
 
 // }
 
-// task 1.8
+// task 1.8 and 1.9
 const Button = (props) => {
   return (
-
     <button onClick={props.onClick} > {props.text} </button>
   )
 }
 
 const Statistics = (props) => {
-  return (
+    return (
     <div>
       <p> {props.text} {props.result}</p>
     </div>
   )
 }
+
+
+const ShowStats = (props) => {
+  if(props.all === 0) {
+    return (
+      <div>
+          No feedback given
+      </div>
+    )
+  }
+  else {
+    return (
+      <div>
+        <Statistics text = 'all' result =  {props.all} />
+        <Statistics text = 'average' result = {props.average} />
+        <Statistics text = 'positive' result = {props.positivereviews} />
+      </div>
+    )
+  }}
 
 const App = () => {
 const [goodCounter, setGoodCounter] = useState(0)
@@ -153,9 +171,7 @@ return (
     <p> neutral {neutralCounter}</p>
     <p> bad {badCounter}</p>
 
-    <Statistics text = 'all' result =  {all} />
-    <Statistics text = 'average' result = {average} />
-    <Statistics text = 'positive' result = {positivereviews()} />
+    <ShowStats all = {all} average = {average} positivereviews = {positivereviews()} />
   </div>
 )
 
