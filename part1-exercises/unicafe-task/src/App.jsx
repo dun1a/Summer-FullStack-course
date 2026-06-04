@@ -105,9 +105,12 @@ const Button = (props) => {
 
 const StatisticLine = (props) => {
   return (
-    <div>
-      <p> {props.text} {props.result}</p>
-    </div>
+    <tbody>
+      <tr>
+        <td>{props.text}</td>
+        <td>{props.result}</td>
+      </tr>
+    </tbody>
   )
 }
 
@@ -175,6 +178,7 @@ return (
     <Button onClick={handleBadClick} text = 'bad' />
 
     <h1> statistics </h1>
+    
     <ShowStatistics goodCounter = {goodCounter} neutralCounter={neutralCounter} badCounter={badCounter} all={all} average={average} positivereviews={positivereviews()} />
     
   </div>
