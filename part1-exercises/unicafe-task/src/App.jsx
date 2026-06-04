@@ -142,7 +142,6 @@ const ShowStatistics = (props) => {
   }
 }
 
-
 const App = () => {
 const [goodCounter, setGoodCounter] = useState(0)
 const [neutralCounter, setNeutralCounter] = useState(0)
