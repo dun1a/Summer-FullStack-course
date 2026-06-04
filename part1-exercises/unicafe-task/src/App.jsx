@@ -103,32 +103,25 @@ const Button = (props) => {
   )
 }
 
+// const StatisticLine = (props) => {
+//   return (
+//     <div>
+//       <p> {props.text} {props.result}</p>
+//     </div>
+//   )
+// }
+
 const Statistics = (props) => {
     return (
     <div>
+      {/* <StatisticLine text = 'good' value = {props.goodCounter} />
+      <StatisticLine text = 'neutral' value = {props.neutralCounter} />
+      <StatisticLine text = 'bad' value = {props.badCounter} /> */}
       <p> {props.text} {props.result}</p>
     </div>
   )
 }
 
-
-const ShowStats = (props) => {
-  if(props.all === 0) {
-    return (
-      <div>
-          No feedback given
-      </div>
-    )
-  }
-  else {
-    return (
-      <div>
-        <Statistics text = 'all' result =  {props.all} />
-        <Statistics text = 'average' result = {props.average} />
-        <Statistics text = 'positive' result = {props.positivereviews} />
-      </div>
-    )
-  }}
 
 const App = () => {
 const [goodCounter, setGoodCounter] = useState(0)
@@ -157,21 +150,20 @@ const positivereviews = () => {
   }
 }
 
-
 return (
   <div>
     <h1> give feedback </h1>
-
     <Button onClick={handleGoodClick} text='good' />
     <Button onClick={handleNeutralClick} text = 'neutral' />
     <Button onClick={handleBadClick} text = 'bad' />
 
     <h1> statistics </h1>
-    <p> good {goodCounter}</p>
-    <p> neutral {neutralCounter}</p>
-    <p> bad {badCounter}</p>
-
-    <ShowStats all = {all} average = {average} positivereviews = {positivereviews()} />
+    <Statistics text = 'good' result = {goodCounter} />
+    <Statistics text = 'neutral' result = {neutralCounter} />
+    <Statistics text = 'bad' result = {badCounter} />
+    <Statistics text = 'all' result = {all} />
+    <Statistics text = 'average' result = {average} />
+    <Statistics text = 'positive' result = {positivereviews()} />
   </div>
 )
 
