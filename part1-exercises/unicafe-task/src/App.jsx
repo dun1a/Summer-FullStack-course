@@ -114,12 +114,29 @@ const Button = (props) => {
 const Statistics = (props) => {
     return (
     <div>
-      {/* <StatisticLine text = 'good' value = {props.goodCounter} />
-      <StatisticLine text = 'neutral' value = {props.neutralCounter} />
-      <StatisticLine text = 'bad' value = {props.badCounter} /> */}
       <p> {props.text} {props.result}</p>
     </div>
   )
+}
+
+const ShowStatistics = (props) => {
+  if (props.all === 0) {
+    return (
+      <div>No feedback given</div>
+    )
+}
+  else{
+    return ( 
+      <div>
+        <Statistics text = 'good' result = {props.goodCounter} />
+        <Statistics text = 'neutral' result = {props.neutralCounter} />
+        <Statistics text = 'bad' result = {props.badCounter} />
+        <Statistics text = 'all' result = {props.all} />
+        <Statistics text = 'average' result = {props.average} />
+        <Statistics text = 'positive' result = {props.positivereviews} />
+      </div>
+    )
+  }
 }
 
 
@@ -158,12 +175,8 @@ return (
     <Button onClick={handleBadClick} text = 'bad' />
 
     <h1> statistics </h1>
-    <Statistics text = 'good' result = {goodCounter} />
-    <Statistics text = 'neutral' result = {neutralCounter} />
-    <Statistics text = 'bad' result = {badCounter} />
-    <Statistics text = 'all' result = {all} />
-    <Statistics text = 'average' result = {average} />
-    <Statistics text = 'positive' result = {positivereviews()} />
+    <ShowStatistics goodCounter = {goodCounter} neutralCounter={neutralCounter} badCounter={badCounter} all={all} average={average} positivereviews={positivereviews()} />
+    
   </div>
 )
 
