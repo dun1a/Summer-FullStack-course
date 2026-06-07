@@ -142,33 +142,60 @@ const ShowStatistics = (props) => {
   }
 }
 
+// const App = () => {
+// const [goodCounter, setGoodCounter] = useState(0)
+// const [neutralCounter, setNeutralCounter] = useState(0)
+// const [badCounter, setBadCounter] = useState(0)
+
+// const handleGoodClick = () => {
+//   setGoodCounter(goodCounter + 1)
+// }
+
+// const handleNeutralClick = () => {
+//   setNeutralCounter(neutralCounter + 1)
+// }
+
+// const handleBadClick = () => {
+//   setBadCounter(badCounter + 1)
+// }
+
+// const all = goodCounter + neutralCounter + badCounter
+// const average = (all / 3)
+// const positivereviews = () => {
+//   if (all === 0) {
+//     return 0
+//   } else {
+//     return parseFloat((goodCounter / all) * 100).toFixed(2)
+//   }
+// }
+
+// return (
+//   <div>
+//     <h1> give feedback </h1>
+//     <Button onClick={handleGoodClick} text='good' />
+//     <Button onClick={handleNeutralClick} text = 'neutral' />
+//     <Button onClick={handleBadClick} text = 'bad' />
+
+//     <h1> statistics </h1>
+    
+//     <ShowStatistics goodCounter = {goodCounter} neutralCounter={neutralCounter} badCounter={badCounter} all={all} average={average} positivereviews={positivereviews()} />
+//   </div>
+//   )
+// }
+
 const App = () => {
-const [goodCounter, setGoodCounter] = useState(0)
-const [neutralCounter, setNeutralCounter] = useState(0)
-const [badCounter, setBadCounter] = useState(0)
+
 const [selected, setSelected] = useState(0)
+const [anecdoteVotes, setAnecdoteVotes] = useState(Array(8).fill(0))
 
-const handleGoodClick = () => {
-  setGoodCounter(goodCounter + 1)
+
+const handleVoteClick = () => {
+  const copy = [...anecdoteVotes]
+  copy[selected] += 1
+  setAnecdoteVotes(copy)
 }
 
-const handleNeutralClick = () => {
-  setNeutralCounter(neutralCounter + 1)
-}
 
-const handleBadClick = () => {
-  setBadCounter(badCounter + 1)
-}
-
-const all = goodCounter + neutralCounter + badCounter
-const average = (all / 3)
-const positivereviews = () => {
-  if (all === 0) {
-    return 0
-  } else {
-    return parseFloat((goodCounter / all) * 100).toFixed(2)
-  }
-}
 
 // task 1.12
 const anecdotes = [
@@ -187,19 +214,12 @@ const handleAnecdoteClick = () => {
 }
 return (
   <div>
-    <h1> give feedback </h1>
-    <Button onClick={handleGoodClick} text='good' />
-    <Button onClick={handleNeutralClick} text = 'neutral' />
-    <Button onClick={handleBadClick} text = 'bad' />
-
-    <h1> statistics </h1>
-    
-    <ShowStatistics goodCounter = {goodCounter} neutralCounter={neutralCounter} badCounter={badCounter} all={all} average={average} positivereviews={positivereviews()} />
-    <p>{anecdotes[selected]}</p>
+   <p>{anecdotes[selected]}</p>
+   <p> has {anecdoteVotes[selected]} votes </p>
+   <Button onClick={handleVoteClick} text = 'vote' />
     <Button onClick={handleAnecdoteClick} text = 'next anecdote' />
-  </div>
+    </div>
   )
 }
-
 
 export default App
