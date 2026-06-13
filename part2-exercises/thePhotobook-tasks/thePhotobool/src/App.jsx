@@ -2,14 +2,14 @@ import { useState } from 'react'
 
 function App() {
   const [persons, setPersons] = useState([
-    { name: 'Hoshi',
-      number: '123-456-7890'
-     }
+    { name: 'Hoshi', number: '123-456-7890', id: 1},
+    { name: 'Dunia', number: '123-456-7890', id: 2}
   ])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  console.log(newName)
+  const [nameFilter, setNameFilter] = useState('')
+
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -21,7 +21,8 @@ function App() {
 
     const personObject = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: persons.length + 1
 
     }
     setPersons(persons.concat(personObject))
@@ -29,9 +30,16 @@ function App() {
     setNewNumber('')
   }
 
+
+  const personsToShow = persons.filter(person => person.name.toLowerCase().includes(nameFilter.toLowerCase()))
+  
+
   return (
     <div>
       <h1>Phonebook</h1>
+      <p>Filter shown with <input value={nameFilter} onChange={(e)=> setNameFilter(e.target.value)}/></p>
+
+      <h2>Add a new person</h2>
       <form onSubmit={addPerson}>
         <div>
           <p>name: <input value={newName} onChange={(e) => setNewName(e.target.value)}/> </p>
@@ -41,10 +49,7 @@ function App() {
 
       </form>
       <h2>Numbers</h2>
-      <ul>
-        {persons.map((person,index) => <p key={index}>{person.name}: {person.number}</p>)}
-      </ul>
-
+        {personsToShow.map((person,index) => <p key={index}>{person.name}: {person.number}</p>)}
     </div>
   )
 }
