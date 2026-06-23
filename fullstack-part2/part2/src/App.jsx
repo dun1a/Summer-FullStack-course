@@ -126,17 +126,25 @@ const App = () => {
     //   promise.then(eventHandler)
     // }, [])
 
+  // sending data to the server 
   // creating a function to handle adding new notes
   const addNote = (event) => {
     event.preventDefault() // to prevent the default behavior of the form submission, which is to reload the page
-    console.log('button clicked', event.target)
+
     const noteObject = {
       content: newNote,
-      important: Math.random() < 0.5, // to randomly assign the importance of the note
-      id: String(notes.length + 1)
+      important: Math.random() < 0.5 // to randomly assign the importance of the note
+      //id: Math.random() < 0.5, we dont need id property (post task)
     }
-    setNotes(notes.concat(noteObject)) // ensures the original array is not changed, by creating a new array with the added note
+    // sending data to the server 
+    axios.post('http://localhost:3001/notes', noteObject)
+    .then(response => {
+      console.log(response)
+      setNotes(notes.concat(response.data)) // updates the App component to show the added notes
     setNewNote('')
+    })
+    // setNotes(notes.concat(noteObject)) // ensures the original array is not changed, by creating a new array with the added note
+    // setNewNote('')
   }
   const handleNoteChange = (event) => {
     console.log(event.target.value)
