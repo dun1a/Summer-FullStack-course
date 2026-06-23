@@ -154,6 +154,20 @@ const App = () => {
   const notesToShow = showAll
    ? notes 
    : notes.filter(note => note.important)
+
+   // adding button to toggle note importance
+  const toggleImportanceOf = (id) => {
+    const url = `http://localhost:3001/notes/${id}`
+    const note = notes.find(n => n.id === id) // used to find the note we want to modify, by searching the notes array for the note with the matching id
+    const changedNote = {...note, important: !note.important} // after that we create a new object that is an exact copy of the old note (without the 'important' value)
+    console.log('importance of', id, ' needs to be toggled')
+
+    axios.put(url, changedNote)
+    .then(response => {
+      // creating a new array of notes that includes the updated note, and updating the state variable 'notes' with this new array
+      setNotes(notes.map(note => note.id === id ? response.data : note))
+    })
+  } 
   return (
     <div>
       <h1>Notes</h1>
@@ -162,7 +176,9 @@ const App = () => {
       </button>
       <ul>
         {notesToShow.map(note => 
-          <Note key={note.id} note={note}/>
+          <Note key={note.id} 
+          note={note}
+          toggleImportance={ () => toggleImportanceOf(note.id)}/>
         )}
       </ul>
       
