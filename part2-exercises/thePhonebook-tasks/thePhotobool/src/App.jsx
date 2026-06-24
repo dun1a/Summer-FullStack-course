@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {useEffect} from 'react'
-import axios from 'axios'
+import phonebookService from './services/Phonebook.js'
 import Filter from './components/Filter.jsx'
 import PersonForm from './components/PersonForm.jsx'
 import Persons from './components/Persons.jsx'
@@ -13,10 +13,11 @@ function App() {
   const [nameFilter, setNameFilter] = useState('')
 
   useEffect(() => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
+    // fetch initial data from the server using the phonebookService
+    phonebookService
+    .getAll()
+    .then(initialPersons => {
+      setPersons(initialPersons)
     })
   }, [])
 
@@ -27,14 +28,18 @@ function App() {
       alert(`${newName} is already added to phonebook`)
       return
     }
-
     const personObject = {
       name: newName,
       number: newNumber,
       id: persons.length + 1
 
     }
-    setPersons(persons.concat(personObject))
+    // send/create new person and send to server 
+    phonebookService
+    .create(personObject)
+    .then(returnedPerson =>  {
+      setPersons(persons.concat(returnedPerson))
+    })
     setNewName('')
     setNewNumber('')
   }
