@@ -4,6 +4,7 @@ import phonebookService from './services/Phonebook.js'
 import Filter from './components/Filter.jsx'
 import PersonForm from './components/PersonForm.jsx'
 import Persons from './components/Persons.jsx'
+import Notification from './components/Notification.jsx'
 
 function App() {
   const [persons, setPersons] = useState([])
@@ -11,6 +12,8 @@ function App() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     // fetch initial data from the server using the phonebookService
@@ -33,6 +36,10 @@ function App() {
         .then(returnedPerson => {
           setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
         })
+        setMessage(`${newName}'s number has been updated`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       }
       return
     }
@@ -48,6 +55,10 @@ function App() {
     .then(returnedPerson =>  {
       setPersons(persons.concat(returnedPerson))
     })
+    setMessage(`Added ${newName}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
     setNewName('')
     setNewNumber('')
   }
@@ -70,6 +81,7 @@ function App() {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={message} />
       <Filter nameFilter={nameFilter} setNameFilter={setNameFilter} />
       
       <h2>Add a new person</h2>
