@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import axios from 'axios'
+import './index.css'
 
 //const promise = axios.get('http://localhost:3001/notes')
 //// of we want to access the result of the get operation from the promise, 

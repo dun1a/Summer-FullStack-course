@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import noteService from './services/notes'
 import Note from './components/Note'
+import Notification from './components/Notification'
 
 // // const Note = ({note}) => {
 
@@ -201,7 +202,7 @@ const App = () => {
   const [notes, setNotes] = useState([]) // to initialize as empty array: useState([])
   const [newNote, setNewNote] = useState('a new note...') // a state variable to sote user-submitted input
   const [showAll, setShowAll] = useState(true) // using this state to enable fintering display functionality
-  
+  const [errorMessage, setErrorMessage] = useState(null)
   useEffect(() => { // takes two parameters: 1. the function (the effect itself), which runs only once the component has been rendered for the first time
     // 2. how many times the effeect should run
     noteService
@@ -218,15 +219,17 @@ const App = () => {
     const url = `http://localhost:3001/notes/${id}`
     const note = notes.find(n => n.id === id) // used to find the note we want to modify, by searching the notes array for the note with the matching id
     const changedNote = {...note, important: !note.important} // after that we create a new object that is an exact copy of the old note (without the 'important' value)
-    console.log('importance of', id, ' needs to be toggled')
-
+    
     noteService
     .update(id, changedNote)
     .then(returnedNote => {
       setNotes(notes.map(note => note.id === id ? returnedNote : note))
     })
     .catch(error => {
-      alert(`the note '${note.content}' was already deleted from server`)
+      setErrorMessage(`Note '${note.content}' was already removed from server`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
       setNotes(notes.filter(n => n.id !== id))
     })
   } 
@@ -265,6 +268,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <button onClick={() => setShowAll(!showAll)}>
         show {showAll ? 'important' : 'all'}
       </button>
