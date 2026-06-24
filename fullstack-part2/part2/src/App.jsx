@@ -199,7 +199,7 @@ import Notification from './components/Notification'
 
 const App = () => {
   // uses useState function to initialize the piece of state stored in 'notes' with the array of notes passed in props
-  const [notes, setNotes] = useState([]) // to initialize as empty array: useState([])
+  const [notes, setNotes] = useState(null) // to initialize as empty array: useState([])
   const [newNote, setNewNote] = useState('a new note...') // a state variable to sote user-submitted input
   const [showAll, setShowAll] = useState(true) // using this state to enable fintering display functionality
   const [errorMessage, setErrorMessage] = useState(null)
@@ -210,10 +210,14 @@ const App = () => {
     .then(initialNotes => {
       setNotes(initialNotes)
     })
-    
     }, [])
-    console.log('render', notes.length, 'notes')
+    //console.log('render', notes.length, 'notes')
     
+    // do not render anything if notes is still null
+    if (!notes) {
+      return null
+    }
+
        // adding button to toggle note importance
   const toggleImportanceOf = (id) => {
     const url = `http://localhost:3001/notes/${id}`
