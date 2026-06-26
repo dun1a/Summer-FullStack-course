@@ -24,12 +24,15 @@ function App() {
 
   const countriesToShow = countries.filter(country => country.name.common.toLowerCase().includes(countryName.toLowerCase()))
 
+  const showChosenCountry = (countryName) => {
+    setCountryName(countryName)
+  }
  
   return (
     <div>
       <form>
        <CountryFilter filter={countryName} handleFilter={handleCountryChange} />
-       <Country countriesToShow={countriesToShow} />
+       <Country countriesToShow={countriesToShow} showChosenCountry={setCountryName} />
       </form>
     </div>
   )
