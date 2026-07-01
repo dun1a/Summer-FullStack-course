@@ -27,7 +27,7 @@ let phonebook = [
     }
 ]
 
-app.get('/api/phonebook', (request,response) => {
+app.get('/api/persons', (request,response) => {
     response.json(phonebook)
 })
 
@@ -39,7 +39,7 @@ app.get('/info', (request, response) => {
     response.send(html)
 })
 
-app.get('/api/phonebook/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
     const person = phonebook.find(p => p.id === id)
     
@@ -50,14 +50,14 @@ app.get('/api/phonebook/:id', (request, response) => {
     }
 })
 
-app.delete('/api/phonebook/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
     phonebook = phonebook.filter(p => p.id !== id)
 
     response.status(204).end()
 })
 
-app.post('/api/phonebook', (request, response) => {
+app.post('/api/persons', (request, response) => {
     const body = request.body
 
     if(!body.name || !body.number){
@@ -73,6 +73,7 @@ app.post('/api/phonebook', (request, response) => {
     }
 
     phonebook = phonebook.concat(newPerson)
+    console.log(phonebook)
     response.json(newPerson)
 })
 
