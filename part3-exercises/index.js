@@ -66,6 +66,12 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
+    if(phonebook.find(p => p.name === body.name)){
+        return response.status(400).json({
+            error: 'name must be unique'
+        })
+    }
+
     const newPerson = {
         id: Math.floor(Math.random() * 10000).toString(),
         name: body.name,
