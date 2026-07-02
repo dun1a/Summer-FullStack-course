@@ -14,13 +14,11 @@ const App = () => {
   const [newNote, setNewNote] = useState('a new note...') // a state variable to sote user-submitted input
   const [showAll, setShowAll] = useState(true) // using this state to enable fintering display functionality
   const [errorMessage, setErrorMessage] = useState(null)
-
   useEffect(() => { // takes two parameters: 1. the function (the effect itself), which runs only once the component has been rendered for the first time
     // 2. how many times the effeect should run
     noteService
     .getAll()
     .then(initialNotes => {
-      console.log('data:', response.data)
       setNotes(initialNotes)
     })
     }, [])
