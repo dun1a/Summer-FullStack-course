@@ -70,7 +70,7 @@ function App() {
   }
 
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(nameFilter.toLowerCase()))
-  
+  // delete person from the phonebook
   const deletePerson = (id) => {
     console.log('delete person with id', id)
     const person = persons.find(p => p.id === id)
