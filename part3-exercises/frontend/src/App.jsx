@@ -20,11 +20,8 @@ function App() {
     phonebookService
     .getAll()
     .then(initialPersons => {
-      console.log('initial persons', initialPersons)
+      //console.log('initial persons', initialPersons)
       setPersons(initialPersons)
-    })
-    .catch(error => {
-      console.log('error fetching persons:', error)
     })
   }, [])
 
