@@ -1,7 +1,9 @@
 import express from 'express';
+import cors from 'cors';
 
 console.log("Testing testing testing")
 const app = express();
+app.use(cors());
 app.use(express.json())
 
 let phonebook = [
