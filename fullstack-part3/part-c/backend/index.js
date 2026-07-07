@@ -13,23 +13,7 @@ app.use(express.json())
 // corresponding to the request's address. If a correct file is found, Express will return it.
 app.use(express.static('dist')) 
 
-let notes = [
-    {
-        id: 1,
-        content: "HTML is easy",
-        important: true
-    },
-    {
-        id: 2,
-        content: "Browser can execute only JavaScript",
-        important: false
-    },
-    {
-        id: 3,
-        content: "GET and POST are the most important methods of HTTP protocol",
-        important: true
-    }
-]
+let notes = []
 
 // dont need this here rn //
 // createServer creates a new server
@@ -47,9 +31,10 @@ app.get('/api/notes', (request, response) => {
     Note.find({}).then(result => {
         result.forEach(note => {
             console.log(note)
+            response.json(notes)
         })
     })
-    response.json(notes)
+
 })
 
 // fetching a single note by id, the id is passed as a parameter in the url, and we can access it using request.params.id
