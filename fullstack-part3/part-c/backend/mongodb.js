@@ -1,7 +1,9 @@
 import mongoose from 'mongoose'
 
+
 const connectDB = async () => {
-    const conn = await mongoose.connect("mongodb+srv://dun1aa1nud:Bd7TlNBGwAJnlEzr@cluster0.ipd6vx.mongodb.net/Summer-fullstack")
+    console.log('connecting to:', process.env.MONGODB_URI)
+    const conn = await mongoose.connect(process.env.MONGODB_URI)
     console.log(`connected to database`)
 }
 

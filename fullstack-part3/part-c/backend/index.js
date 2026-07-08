@@ -1,9 +1,11 @@
+import dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
 import connectDB from './mongodb.js'
 import mongoose from 'mongoose'
 import Note from './model/NoteModel.js'
 
+dotenv.config(); 
 const app = express()
 connectDB()
 app.use(cors())
@@ -28,27 +30,33 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-    Note.find({}).then(result => {
-        result.forEach(note => {
+    Note.find({}).then(notes => {
+        notes.forEach(note => {
             console.log(note)
-            response.json(notes)
         })
+        response.json(notes)
     })
 
 })
 
 // fetching a single note by id, the id is passed as a parameter in the url, and we can access it using request.params.id
 app.get('/api/notes/:id', (request, response) => {
-    const id = Number(request.params.id)
-    console.log(id)
-    const note = notes.find(note => note.id === id)
-
-    // if there is a note fetch it, otherwise return a 404 error
+    Note.findById(request.params.id)
+    .then(note => {
     if(note){
         response.json(note)
     }else{
         response.status(404).end()
     }
+    })
+    //const id = Number(request.params.id)
+    //console.log(id)
+    //const note = notes.find(note => note.id === id)
+
+    // if there is a note fetch it, otherwise return a 404 error
+    .catch(error => {
+        response.status(400).json({error: 'malformatted id'})
+    })
 })
 
 
@@ -71,24 +79,28 @@ app.post('/api/notes', (request, response) => {
     const newNote =  new Note({
         content: body.content,
         important: body.important || false,
-        id: generateId() 
+        //id: generateId() 
     })
     // save method for saving created objects to the databse
-    newNote.save().then(result => {
+    newNote.save().then(savedNote => {
         console.log('note saved!')
+        console.log(savedNote)
+        response.json(savedNote)
     })
-
-    console.log(newNote)
-    response.json(newNote)
 })
 
-
 // deleting source
-app.delete('/api/notes/:id', (request, response) => {
-    const id = Number(request.params.id)
-    notes = notes.filter(note => note.id !== id)
+app.delete('/api/notes/:id', (request, response, next) => {
+    Note.findByIdAndDelete(request.params.id)
+    .then(result => {
+        response.status(204).end()
+    })
+    .catch(error => next(error))
 
-    response.status(204).end()
+    //const id = Number(request.params.id)
+    //notes = notes.filter(note => note.id !== id)
+
+    //response.status(204).end()
 })
 
 // binds the http server assigned to the app variable to listen to HTTP requests sent to port 3001

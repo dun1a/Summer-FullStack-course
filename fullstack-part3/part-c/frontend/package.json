@@ -1,22 +1,18 @@
 {
-  "name": "backend",
+  "name": "frontend",
   "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "node --watch index.js",
+    "dev": "vite",
     "start": "node index.js",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview",
-    "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
+    "preview": "vite preview"
   },
   "dependencies": {
     "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^9.7.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
