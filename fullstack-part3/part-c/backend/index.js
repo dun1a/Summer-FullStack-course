@@ -43,11 +43,11 @@ app.get('/api/notes', (request, response) => {
 app.get('/api/notes/:id', (request, response) => {
     Note.findById(request.params.id)
     .then(note => {
-    if(note){
-        response.json(note)
-    }else{
-        response.status(404).end()
-    }
+        if(note){
+            response.json(note)
+        }else{
+            response.status(404).end()
+        }
     })
     //const id = Number(request.params.id)
     //console.log(id)
@@ -55,7 +55,8 @@ app.get('/api/notes/:id', (request, response) => {
 
     // if there is a note fetch it, otherwise return a 404 error
     .catch(error => {
-        response.status(400).json({error: 'malformatted id'})
+        console.log(error)
+        response.status(500).send({error: 'malformatted id'})
     })
 })
 
@@ -88,6 +89,12 @@ app.post('/api/notes', (request, response) => {
         response.json(savedNote)
     })
 })
+
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({error: 'unknown endpoint'})
+}
+
+app.use(unknownEndpoint)
 
 // deleting source
 app.delete('/api/notes/:id', (request, response, next) => {
