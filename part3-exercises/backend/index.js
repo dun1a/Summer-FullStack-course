@@ -18,7 +18,6 @@ app.get('/api/persons', (request,response) => {
     Person.find({}).then(persons => {
         response.json(persons)
     })
-    
 })
 
 app.get('/info', (request, response) => {
