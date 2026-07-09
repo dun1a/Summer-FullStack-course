@@ -70,7 +70,7 @@ function App() {
     const person = persons.find(p => p.id === id)
     if(window.confirm(`Are you sure you want to delete person with id ${id}?`)){
       phonebookService
-      .update(id, person)
+      .deletePerson(id, person)
       .then((returnedPerson) => {
         setPersons(persons.filter(p => p.id !== id))
       })
