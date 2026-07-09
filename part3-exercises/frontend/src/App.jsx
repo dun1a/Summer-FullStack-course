@@ -22,6 +22,7 @@ function App() {
     .then(initialPersons => {
       //console.log('initial persons', initialPersons)
       setPersons(initialPersons)
+
     })
   }, [])
 
@@ -71,14 +72,18 @@ function App() {
 
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(nameFilter.toLowerCase()))
   // delete person from the phonebook
-  const deletePerson = (id) => {
+  const deleteAPerson = (id) => {
     console.log('delete person with id', id)
     const person = persons.find(p => p.id === id)
     if(window.confirm(`Are you sure you want to delete person with id ${id}?`)){
       phonebookService
       .deletePerson(id)
       .then((returnedPerson) => {
+        console.log('deleted successful')
         setPersons(persons.filter(p => p.id !== id))
+      })
+      .catch(error => {
+        console.log('delete failed', error)
       })
     }
     return
@@ -94,7 +99,7 @@ function App() {
       <PersonForm addPerson={addPerson} newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} />
       
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} deletePerson={deletePerson} />
+      <Persons personsToShow={personsToShow} deletePerson={deleteAPerson} />
     </div>
   )
 }
