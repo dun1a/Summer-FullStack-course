@@ -13,7 +13,9 @@ function App() {
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
 
+
   const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState('success')
 
   useEffect(() => {
     // fetch initial data from the server using the phonebookService
@@ -61,13 +63,19 @@ function App() {
     .create(personObject)
     .then(returnedPerson =>  {
       setPersons(persons.concat(returnedPerson))
+      setMessage(`Added ${newName}`)
+      setMessageType('success')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+      setNewName('')
+      setNewNumber('')
     })
-    setMessage(`Added ${newName}`)
-    setTimeout(() => {
-      setMessage(null)
-    }, 5000)
-    setNewName('')
-    setNewNumber('')
+    .catch(error => {
+      console.log(error.response.data.error)
+      setMessageType('error')
+      setMessage(`Error: ${error.response.data.error}`)
+    })
   }
 
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(nameFilter.toLowerCase()))
@@ -80,10 +88,20 @@ function App() {
       .deletePerson(id)
       .then((returnedPerson) => {
         console.log('deleted successful')
+        setMessageType('success')
+        setMessage(`Deleted successful!`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
         setPersons(persons.filter(p => p.id !== id))
       })
       .catch(error => {
         console.log('delete failed', error)
+        setMessageType('error')
+        setMessage('Delete failes')
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
     }
     return
@@ -92,7 +110,7 @@ function App() {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={message} />
+      <Notification message={message} type={messageType}/>
       <Filter nameFilter={nameFilter} setNameFilter={setNameFilter} />
       
       <h2>Add a new person</h2>

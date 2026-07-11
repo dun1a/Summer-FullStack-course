@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 const personsSchema = new mongoose.Schema({
     name: {
         type: String,
+        minlength: 3,
         required: true
     },
     number: {

@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './mongo.js';
 import mongoose from 'mongoose'
 import Person from './model/PersonsModel.js'
+import errorHandler from './middleware/ErrorHandler.js'
 import UnknownEndpoint from './middleware/UnknownEndpoint.js'
 
 dotenv.config();
@@ -11,7 +12,7 @@ const app = express();
 connectDB();
 app.use(cors());
 
-app.use(UnknownEndpoint);
+
 
 app.use(express.json())
 app.use(express.static('dist'))
@@ -54,11 +55,11 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if(!body.name || !body.number){
-        return response.status(400).json({
+        return response.status(400).json({ // 400 means bad request
             error: 'name or number is missing'
         })
     }
@@ -80,6 +81,7 @@ app.post('/api/persons', (request, response) => {
         console.log('saved person', savedPerson)
         response.json(savedPerson)
     })
+    .catch(error => next(error))
     // phonebook = phonebook.concat(newPerson)
     // console.log(phonebook)
     // response.json(newPerson)
@@ -104,6 +106,9 @@ app.put('/api/persons/:id', (request,response, next) => {
     })
     .catch(error => next(error))
 })
+
+app.use(errorHandler)
+app.use(UnknownEndpoint)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
