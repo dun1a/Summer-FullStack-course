@@ -41,8 +41,7 @@ app.get('/api/persons/:id', (request, response) => {
             response.status(404).end()
         }
     })
-    //const id = request.params.id
-    //const person = phonebook.find(p => p.id === id)
+
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -53,8 +52,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
     })
     .catch(error => next(error))
 
-    //const id = request.params.id
-    //phonebook = phonebook.filter(p => p.id !== id)
 })
 
 app.post('/api/persons', (request, response) => {
