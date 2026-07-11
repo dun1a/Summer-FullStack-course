@@ -4,11 +4,15 @@ import cors from 'cors';
 import connectDB from './mongo.js';
 import mongoose from 'mongoose'
 import Person from './model/PersonsModel.js'
+import UnknownEndpoint from './middleware/UnknownEndpoint.js'
 
 dotenv.config();
 const app = express();
 connectDB();
 app.use(cors());
+
+app.use(UnknownEndpoint);
+
 app.use(express.json())
 app.use(express.static('dist'))
 
