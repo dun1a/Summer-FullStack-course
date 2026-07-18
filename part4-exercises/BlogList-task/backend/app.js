@@ -1,9 +1,13 @@
+import dotenv from 'dotenv'
+import connectDB from './mongodb.js'
 import express from 'express'
 import cors from 'cors'
 import logger from './utils/logger.js'
 import middleware from './utils/middleware.js'
-
 import blogRouter from './controllers/blog.js'
+
+dotenv.config()
+connectDB()
 
 const app = express()
 // app.use(express.static('dist'))
