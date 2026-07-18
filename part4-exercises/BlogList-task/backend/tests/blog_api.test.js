@@ -35,7 +35,24 @@ test.only('blogs have id property not _id', async () => {
     })
 })
     
-    
+test.only(' a valid blog can be added to db', async () => {
+    const newBlog = {
+        title: 'New blog',
+        author: 'new author',
+        url: 'http://example.com/new-blog',
+        likes: 12
+    }
+
+    await api
+    .post('/api/blogs') // send POST request to /api/blogs
+    .send(newBlog) // attaches newBlog object as the request body ( data to send to server)
+    .expect(201) 
+    .expect('Content-type', /application\/json/) // assert the response returns as JSON
+
+    const blogsAfter = await helper.blogsInDb() // fetches all blogs currently in the database adter the POST request
+
+    assert.strictEqual(blogsAfter.length, helper.initialBlogs.length + 1)
+})
 
 after(async () => {
     await mongoose.connection.close()

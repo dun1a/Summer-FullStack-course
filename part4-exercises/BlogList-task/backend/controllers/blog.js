@@ -8,14 +8,8 @@ blogRouter.get('/', async (request, response) => {
     response.json(blogs)
 })
 
-blogRouter.post('/', (request, response, next) => {
+blogRouter.post('/', async (request, response) => {
     const body = request.body
-
-    if(!body.title || !body.author){
-        return response.status(400).json({
-            error: 'title or author missing'
-        })
-    }
 
     const newBlog = new Blog({
         title: body.title,
@@ -24,10 +18,8 @@ blogRouter.post('/', (request, response, next) => {
         likes: body.likes || 0,
     })
 
-    newBlog.save().then((savedBlog) => {
-        response.json(savedBlog)
-    })
-    .catch((error) => next(error))
+   const savedBlog = await newBlog.save()
+   response.status(201).json(savedBlog)
 })
 
 
