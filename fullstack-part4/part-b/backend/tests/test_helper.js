@@ -16,16 +16,16 @@ const nonExistingId = async () => {
     const note = new Note({
         content: 'willremovethissoon'
     })
-    await note.save()
-    await note.deleteOne()
+    await note.save() // saves created note in db
+    await note.deleteOne() // imediately deletes created the saved object 
 
-    return note._id.toString()
+    return note._id.toString() // returns the ID of the now-deleted note
 }
 
 // this function checks the notes stored in the database
 const notesInDb = async () => {
-    const notes = await Note.find({})
-    return notes.map(note => note.toJSON())
+    const notes = await Note.find({}) // fetches all notes in the db
+    return notes.map(note => note.toJSON()) // converts them to JSON objects 
 }
 
-export { initialNotes, nonExistingId, notesInDb }
+export default{ initialNotes, nonExistingId, notesInDb }

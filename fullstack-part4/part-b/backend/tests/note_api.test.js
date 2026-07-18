@@ -3,6 +3,7 @@ import assert from 'node:assert'
 import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../app.js'
+import helper from './test_helper.js'
 import Note from '../model/NoteModel.js'
 
 // tests only use the Express application defined in the app.js file
@@ -14,24 +15,27 @@ import Note from '../model/NoteModel.js'
 
 const api = supertest(app)
 
-const initialNotes = [
-    {
-        content: 'HTML is easy',
-        important: false
-    }, 
-    {
-        content: 'Browser can execute only Javascript',
-        important: true
-    }
-]
-
 // before adding test_helper.js
+// beforeEach(async () => {
+//     await Note.deleteMany({}) // database cleared at the beginning
+//     let noteObject = new Note(initialNotes[0]) // add new note
+//     await noteObject.save() // save first note
+//     noteObject = new Note(initialNotes[1]) // add second note
+//     await noteObject.save() // save second note
+// })
+
+// after adding test_helper.js
 beforeEach(async () => {
-    await Note.deleteMany({}) // database cleared at the beginning
-    let noteObject = new Note(initialNotes[0]) // add new note
-    await noteObject.save() // save first note
-    noteObject = new Note(initialNotes[1]) // add second note
-    await noteObject.save() // save second note
+    await Note.deleteMany({}) // database cleard at the beginning 
+    console.log('cleared database')
+    await Note.insertMany(helper.initialNotes)
+
+    // does same this as the code above 
+    // let noteObject = new Note(helper.initialNotes[0]) // add new note
+    // await noteObject.save() // save first added note
+
+    // noteObject = new Note(helper.initialNotes[1]) // add second note
+    // await noteObject.save() // save second note object
 })
 
 test.only('notes are returned as json', async () => {
@@ -44,16 +48,23 @@ test.only('notes are returned as json', async () => {
 test.only('all notes are returned', async () => {
     const response = await api.get('/api/notes')
 
-    assert.strictEqual(response.body.length, initialNotes.length)
+    assert.strictEqual(response.body.length,helper.initialNotes.length)
 })
 
-test('a specific note is within the returned notes', async () => {
-    const response = await api.get('/api/notes')
+test.only('a specific note is within the returned notes', async () => {
+   const notesAtStart = await helper.notesInDb() // fetches notes in the database
+   const noteToView = notesAtStart[0] // selects the first note in the database
 
-    const contents = response.body.map(e => e.content)
-    assert(contents.includes('HTML is easy'), true)
+   const resultNote = await api // checks if the note fetched from the database is the same one as the one fetched from the api
+   .get(`/api/notes/${noteToView.id}`) // fetches the note from the api using the id of the note fetched from the database
+   .expect(200)
+   .expect('Content-type', /application\/json/)
+
+   assert.deepStrictEqual(resultNote.body, noteToView) // checks if the note fetched from the database is the same as the one fetched from the API
+   // deepStrictequal checks the object's content and structure
 })
 
+// adding a new note
 test.only('a valid note can be added', async () => {
     const newNote = {
         content: 'async/await simplifies making async calls',
@@ -68,12 +79,15 @@ test.only('a valid note can be added', async () => {
 
     const response = await api.get('/api/notes')
 
-    const contents = response.body.map(response => response.content)
+    const notesInDb = await helper.notesInDb()
+    assert.strictEqual(notesInDb.length, helper.initialNotes.length + 1)
 
-    assert.strictEqual(response.body.length, initialNotes.length + 1)
+    const contents = notesInDb.map(note => note.content)
+
     assert(contents.includes('async/await simplifies making async calls'))
 })
 
+// adding note with no content
 test.only('note with no content is not added', async () => {
     const newNote = {
         important: true
@@ -86,7 +100,26 @@ test.only('note with no content is not added', async () => {
 
     const response = await api.get('/api/notes')
 
-    assert.strictEqual(response.body.length, initialNotes.length)
+    const notesInDb = await helper.notesInDb()
+
+    assert.strictEqual(notesInDb.length, helper.initialNotes.length)
+})
+
+// for deleting a note
+test.only('a note can be deleted', async () => {
+    const notesAtStart = await helper.notesInDb() // takes snapshot of database before the deleting, to know what there was at the beginning
+    const noteToDelete = notesAtStart[0] // picks first note object as the one to delete
+
+    await api // 
+        .delete(`/api/notes/${noteToDelete.id}`) // sends delete request to the api wiht the notes id
+        .expect(204) // expects 204 No content response = deletion successful
+
+    const notesAtEnd = await helper.notesInDb() // takes another snapshot of db after the delete operation to compare with before
+
+    const id = notesAtEnd.map(note => note.id) // gets all remaining ids
+    assert(!id.includes(noteToDelete.id)) // checks if deleted note's id is no longer in the db (!id = assert that this is NOT included)
+
+    assert.strictEqual(notesAtEnd.length, helper.initialNotes.length - 1 ) // confirms that  the database has now exactly one less note than before
 })
 
 after(async () => {
