@@ -84,8 +84,26 @@ test.only('blog can be deleted', async () => {
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    //const ids = blogsAtEnd.map(blog => blog.id)
+    const ids = blogsAtEnd.map(blog => blog.id)
     assert(!ids.includes(blogToDelete.id))
+})
+
+test.only('blog can be uodated', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send({
+        title: "updated title",
+        author: "updated author",
+        url: "http://example.com/updated-blog",
+        likes: 20
+    })
+    .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd[0].title, "updated title")
 })
 
 
