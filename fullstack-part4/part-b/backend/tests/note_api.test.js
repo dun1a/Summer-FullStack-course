@@ -64,6 +64,22 @@ test.only('a specific note is within the returned notes', async () => {
    // deepStrictequal checks the object's content and structure
 })
 
+test.only('fails with statuscode 404 if note does not exits', async () => {
+    const valiNoneexistingId = await helper.nonExistingId() 
+
+    await api
+    .get(`/api/notes/${valiNoneexistingId}`)
+    .expect(404)
+})
+
+test.only('fails with statuscode 400 if id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445' // 23 characters instead of 24
+
+    await api
+    .get(`/api/notes/${invalidId}`)
+    .expect(400)
+})
+
 // adding a new note
 test.only('a valid note can be added', async () => {
     const newNote = {
