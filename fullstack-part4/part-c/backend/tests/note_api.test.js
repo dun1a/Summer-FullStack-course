@@ -1,10 +1,12 @@
-import {test, after, beforeEach} from 'node:test'
+import {describe, test, after, beforeEach} from 'node:test'
 import assert from 'node:assert'
 import mongoose from 'mongoose'
 import supertest from 'supertest'
+import bcrypt from 'bcrypt'
 import app from '../app.js'
 import helper from './test_helper.js'
 import Note from '../model/NoteModel.js'
+import User from '../model/userModel.js'
 
 // tests only use the Express application defined in the app.js file
 // which does NOT listen to any ports
@@ -38,20 +40,20 @@ beforeEach(async () => {
     // await noteObject.save() // save second note object
 })
 
-test.only('notes are returned as json', async () => {
+test('notes are returned as json', async () => {
     await api
     .get('/api/notes')
     .expect(200)
     .expect('Content-type', /application\/json/) // means regular expression or regex
 })
 
-test.only('all notes are returned', async () => {
+test('all notes are returned', async () => {
     const response = await api.get('/api/notes')
 
     assert.strictEqual(response.body.length,helper.initialNotes.length)
 })
 
-test.only('a specific note is within the returned notes', async () => {
+test('a specific note is within the returned notes', async () => {
    const notesAtStart = await helper.notesInDb() // fetches notes in the database
    const noteToView = notesAtStart[0] // selects the first note in the database
 
@@ -64,7 +66,7 @@ test.only('a specific note is within the returned notes', async () => {
    // deepStrictequal checks the object's content and structure
 })
 
-test.only('fails with statuscode 404 if note does not exits', async () => {
+test('fails with statuscode 404 if note does not exits', async () => {
     const valiNoneexistingId = await helper.nonExistingId() 
 
     await api
@@ -72,7 +74,7 @@ test.only('fails with statuscode 404 if note does not exits', async () => {
     .expect(404)
 })
 
-test.only('fails with statuscode 400 if id is invalid', async () => {
+test('fails with statuscode 400 if id is invalid', async () => {
     const invalidId = '5a3d5da59070081a82a3445' // 23 characters instead of 24
 
     await api
@@ -81,7 +83,7 @@ test.only('fails with statuscode 400 if id is invalid', async () => {
 })
 
 // adding a new note
-test.only('a valid note can be added', async () => {
+test('a valid note can be added', async () => {
     const newNote = {
         content: 'async/await simplifies making async calls',
         important: true,
@@ -104,7 +106,7 @@ test.only('a valid note can be added', async () => {
 })
 
 // adding note with no content
-test.only('note with no content is not added', async () => {
+test('note with no content is not added', async () => {
     const newNote = {
         important: true
     }
@@ -122,7 +124,7 @@ test.only('note with no content is not added', async () => {
 })
 
 // for deleting a note
-test.only('a note can be deleted', async () => {
+test('a note can be deleted', async () => {
     const notesAtStart = await helper.notesInDb() // takes snapshot of database before the deleting, to know what there was at the beginning
     const noteToDelete = notesAtStart[0] // picks first note object as the one to delete
 
@@ -136,6 +138,63 @@ test.only('a note can be deleted', async () => {
     assert(!id.includes(noteToDelete.id)) // checks if deleted note's id is no longer in the db (!id = assert that this is NOT included)
 
     assert.strictEqual(notesAtEnd.length, helper.initialNotes.length - 1 ) // confirms that  the database has now exactly one less note than before
+})
+
+describe('when there is initially one user in db', () =>{
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('sekret', 10)
+        const user = new User({ username: 'root', passwordHash })
+        
+        await user.save()
+    })
+
+    test('creation succeeds with a fresh username', async () => {
+        
+        const userAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'user1',
+            name: 'first user',
+            password: 'password1'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-type', /application\/json/)
+        
+        const usersAtEnd = await helper.usersInDb()
+        assert.strictEqual(usersAtEnd.length, userAtStart.length + 1)
+
+        const usernames = usersAtEnd.map(u => u.username)
+        assert(usernames.includes(newUser.username))
+    })
+
+    test('creation fails with proper statuscode and message if username already exists', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'root',
+            name: 'Superuser',
+            password: 'password'
+        }
+
+        console.log(await User.collection.indexes())
+        const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+
+        assert(result.body.error.includes('username must be unique'))
+
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    })
 })
 
 after(async () => {
