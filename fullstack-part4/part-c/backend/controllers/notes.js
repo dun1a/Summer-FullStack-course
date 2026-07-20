@@ -1,6 +1,6 @@
 import Router from 'express'
-import Note from '../model/NoteModel.js'
-
+import Note from '../model/noteModel.js'
+import User from '../model/userModel.js'
 
 const notesRouter = Router()
 // before async/await
@@ -12,7 +12,7 @@ const notesRouter = Router()
 
 // using async/await
 notesRouter.get('/', async (request, response) => {
-  const notes = await Note.find({})
+  const notes = await Note.find({}).populate('user', { username: 1, name: 1 })
   response.json(notes)
 })
 
@@ -29,18 +29,25 @@ notesRouter.get('/:id',async (request, response) => {
 notesRouter.post('/', async (request, response) => {
   const body = request.body
 
-  if(!body.content){
+  // check for user so that user information is sent in the userId field to the request body
+  const user = await User.findById(body.userId)
+
+  if(!user) {
     return response.status(400).json({
-      error: 'content missing'
+      error: 'userid missing or not valid'
     })
   }
 
   const newNote = new Note({
     content: body.content,
     important: body.important || false,
+    user: user._id
   })
 
   const savedNote = await newNote.save()
+  user.notes = user.notes.concat(savedNote._id) // add the created note's id to the note array in the user object
+  await user.save()
+
   response.status(201).json(savedNote)
 })
 

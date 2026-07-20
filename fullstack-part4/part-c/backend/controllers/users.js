@@ -5,7 +5,7 @@ import User from '../model/userModel.js'
 const usersRouter = Router()
 
 usersRouter.get('/', async (request, response) => {
-    const users = await User.find({})
+    const users = await User.find({}).populate('notes', { content: 1, important: 1 }) // allows us to have the note's content in the user object, not just the id
     response.json(users)
 })
 
