@@ -5,7 +5,7 @@ import Router from 'express'
 const userRouter = Router()
 
 userRouter.get('/', async (request, response) => {
-    const users = await User.find({})
+    const users = await User.find({}).populate('blogs', {title: 1, author: 1})
     response.json(users)
 })
 
@@ -15,6 +15,16 @@ userRouter.post('/', async (request, response) => {
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(password, saltRounds)
 
+    if(!password || password.length < 3){
+        return response.status(400).json({
+            error: 'password is required and must be at least 3 characters long'
+        })
+    }
+    if(!username || username.length < 3){
+        return response.status(400).json({
+            error: 'username is required and must be at least 3 characters long'
+        })
+    }
     const user = new User({
         username,
         name,
