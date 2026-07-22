@@ -5,6 +5,7 @@ import cors from 'cors'
 import logger from './utils/logger.js'
 import middleware from './utils/middleware.js'
 import blogRouter from './controllers/blog.js'
+import userRouter from './controllers/users.js'
 
 dotenv.config()
 connectDB()
@@ -14,6 +15,7 @@ const app = express()
 app.use(express.json())
 
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', userRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
