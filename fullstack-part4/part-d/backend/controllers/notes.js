@@ -1,4 +1,5 @@
 import Router from 'express'
+import jwt from 'jsonwebtoken'
 import Note from '../model/noteModel.js'
 import User from '../model/userModel.js'
 
@@ -26,11 +27,30 @@ notesRouter.get('/:id',async (request, response) => {
   }
 })
 
+
+// making creating notes possible only with logged-in users
+const getTokenFrom = request => { // helper function to extract token from request headers
+  const auhtorization = request.get('authorization') // gets Authorization header from the request 
+  if (auhtorization && auhtorization.startsWith('Bearer ')){ // checks that header exists and checks if it starts with 'Bearer'
+    return auhtorization.replace('Bearer ', '') // removes the 'Bearer' and returns only the raw token string
+  }
+  return null // if there is no authorization header or it doesn't start with 'Bearer', return null
+}
+
 notesRouter.post('/', async (request, response) => {
   const body = request.body
 
+  // verify the decode the token using the SECRET key
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET) // contains the username and id fields
+  if(!decodedToken.id){ // if token doesn't have id = token invalid => throw error
+    return response.status(401).json({
+      error: 'token invalid'
+    })
+  }
+  const user = await User.findById(decodedToken.id) 
+
   // check for user so that user information is sent in the userId field to the request body
-  const user = await User.findById(body.userId)
+  //const user = await User.findById(body.userId)
 
   if(!user) {
     return response.status(400).json({
