@@ -2,6 +2,7 @@ import Router from 'express'
 import jwt from 'jsonwebtoken'
 import Blog from '../model/blogModel.js'
 import User from '../model/userModel.js'
+import middleware from '../utils/middleware.js'
 
 const blogRouter = Router()
 
@@ -11,19 +12,19 @@ blogRouter.get('/', async (request, response) => {
 })
 
 // this function isolated the token from the authorization header
-const getTokenFrom = request => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')){
-        return authorization.replace('Bearer ', '')
-    }
-    return null
-}
+// const getTokenFrom = request => {
+//     const authorization = request.get('authorization')
+//     if (authorization && authorization.startsWith('Bearer ')){
+//         return authorization.replace('Bearer ', '')
+//     }
+//     return null
+// }
 
 blogRouter.post('/', async (request, response) => {
     const body = request.body
 
     // check token validity and decode the token
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if(!decodedToken.id){
         return response.status(401).json({
             error: 'token invalid'
