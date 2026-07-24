@@ -23,22 +23,34 @@ blogRouter.get('/', async (request, response) => {
 blogRouter.post('/', async (request, response) => {
     const body = request.body
 
+    // before adding middleware to extract the user id
     // check token validity and decode the token
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if(!decodedToken.id){
-        return response.status(401).json({
-            error: 'token invalid'
+    // const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    // if(!decodedToken.id){
+    //     return response.status(401).json({
+    //         error: 'token invalid'
+    //     })
+    // }
+
+    // const user = await User.findById(decodedToken.id)
+
+
+    // after adding middleware userExtractor
+    // get user from request object
+    const user = await User.findById(request.user.id)
+
+    if(!user){
+        return response.status(404).json({
+            error: 'user not found'
         })
     }
-
-    const user = await User.findById(decodedToken.id)
 
     const newBlog = new Blog({
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes || 0,
-        user: user._id
+        user: request.user.id
     })
 
    const savedBlog = await newBlog.save()
@@ -72,14 +84,7 @@ blogRouter.get('/:id', (request, response, next) => {
 blogRouter.delete('/:id', async (request, response) => {
     const blog = await Blog.findById(request.params.id)
 
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if(!decodedToken.id){
-        return response.status(401).json({
-            error: 'invalid token'
-        })
-    }
-
-    const user = await User.findById(decodedToken.id)
+    const user = await User.findById(request.user.id)
 
     if(!user){
         return response.status(404).json({
