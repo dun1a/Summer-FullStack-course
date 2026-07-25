@@ -1,31 +1,44 @@
 import {test, after, beforeEach} from 'node:test'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 import assert from 'node:assert'
 import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../app.js'
 import Blog from '../model/blogModel.js'
+import User from '../model/userModel.js'
 import helper from './blog_helper.js'
 
 const api = supertest(app)
 
+let token // outside the beforeEach block to make it accessible to all tests
+
 beforeEach(async () => {
     await Blog.deleteMany({}) // clear database at the beginning
     await Blog.insertMany(helper.initialBlogs) // add initial blogs
+    await User.deleteMany({}) // clear users collection
+    token = await helper.loginAndToken(api, 'testUser', 'testpassword') // create a test user and get the token for authentication
 })
 
 test.only('blogs are returned as json', async () => {
+
     await api
     .get('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .expect(200)
-    .expect('Content-type', /application\/json/)
+    .expect('Content-Type', /application\/json/)
 })
 
 test.only('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api
+    .get('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
-test.only('blogs have id property not _id', async () => {
+test('blogs have id property not _id', async () => {
     const response = await api.get('/api/blogs')
 
     const blogs = response.body
@@ -35,7 +48,7 @@ test.only('blogs have id property not _id', async () => {
     })
 })
     
-test.only(' a valid blog can be added to db', async () => {
+test(' a valid blog can be added to db', async () => {
     const newBlog = {
         title: 'New blog',
         author: 'new author',
@@ -54,7 +67,7 @@ test.only(' a valid blog can be added to db', async () => {
     assert.strictEqual(blogsAfter.length, helper.initialBlogs.length + 1)
 })
 
-test.only('if likes property is missing, it results to 0', async () => {
+test('if likes property is missing, it results to 0', async () => {
     const newBlog = {
         title: 'New blog',
         author: 'new author',
@@ -74,7 +87,7 @@ test.only('if likes property is missing, it results to 0', async () => {
     assert.strictEqual(noLikesBlog.likes, 0)
 })
 
-test.only('blog can be deleted', async () => {
+test('blog can be deleted', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
@@ -88,7 +101,7 @@ test.only('blog can be deleted', async () => {
     assert(!ids.includes(blogToDelete.id))
 })
 
-test.only('blog can be uodated', async () => {
+test('blog can be uodated', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
 
@@ -106,6 +119,28 @@ test.only('blog can be uodated', async () => {
     assert.strictEqual(blogsAtEnd[0].title, "updated title")
 })
 
+test.only('invalid users are not created', async () => {
+    
+    const usersAtStart = await helper.usersInDb()
+    
+    const newUser = {
+        username: '12',
+        name: 'invalid user',
+        password: '12'
+       }
+
+    await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+    // add error message 
+    assert(result.body.error.includes('username or password too short'))
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+})
 
 after(async () => {
     await mongoose.connection.close()

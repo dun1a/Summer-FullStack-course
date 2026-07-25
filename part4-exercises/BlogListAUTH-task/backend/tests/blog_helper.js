@@ -1,4 +1,7 @@
 import Blog from '../model/blogModel.js'
+import User from '../model/userModel.js'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 const initialBlogs = [
     {
@@ -20,4 +23,29 @@ const blogsInDb = async () => {
     return blogs.map(blog => blog.toJSON())
 }
 
-export default { initialBlogs, blogsInDb }
+const loginAndToken = async (api, username, password) => {
+    const passwordHash = await bcrypt.hash(password, 10)
+    const user = new User({
+        username,
+        name: 'test user',
+        passwordHash
+    })
+    await user.save()
+    console.log('user saved:', user.username)
+
+    const login = await api
+    .post('/api/login')
+    .send({
+        username,
+        password
+    })
+ 
+    return login.body.token
+}
+
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users.map(user => user.toJSON())
+}
+
+export default { initialBlogs, blogsInDb, usersInDb, loginAndToken }
