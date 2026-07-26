@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import loginService from './services/login.js'
 import noteService from './services/notesService.js'
-import Note from './components/Note'
-import Notification from './components/Notification'
+import Note from './components/Note.jsx'
+import Notification from './components/Notification.jsx'
 
 //////////////////////7
 // part 2 d
