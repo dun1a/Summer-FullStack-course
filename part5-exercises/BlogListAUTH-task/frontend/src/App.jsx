@@ -19,14 +19,15 @@ function App() {
         .then(blogs => setBlogs(blogs))
     }, [])
 
-    // useEffect(() => {
-    //     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
-    //     if(loggedUserJSON) {
-    //         const user = JSON.parse(loggedUserJSON)
-    //         setUser(user)
-    //         blogService.setToken(user.token)
-    //     }
-    // }, [])
+    // check if user is already logged in
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+        if(loggedUserJSON) {
+            const user = JSON.parse(loggedUserJSON)
+            setUser(user)
+            blogService.setToken(user.token)
+        }
+    }, [])
 
     // login functionality
     const handleLogin = async (event) => {
@@ -35,9 +36,9 @@ function App() {
         try {
             const user = await loginService.login({username, password})
             
-            //window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-            
-            //blogService.setToken(user.token)
+            window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+            blogService.setToken(user.token)
+
             setUser(user)
             console.log('user', user)
             setUsername('')
@@ -79,6 +80,11 @@ function App() {
         )
     }
 
+    const logOut = () => {
+        window.localStorage.removeItem('loggedBlogAppUser')
+        setUser(null)
+    }
+
     return (
         <div>
             <Notification message = {errorMessage} />
@@ -87,6 +93,7 @@ function App() {
                 <div>
                     <p>{user.name} Logged in</p>
                     <BlogsList blogs = {blogs} />
+                    <button onClick={logOut}>Logout</button>
                 </div>
             )}
         </div>
