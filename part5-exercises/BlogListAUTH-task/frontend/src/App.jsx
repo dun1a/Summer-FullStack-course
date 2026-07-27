@@ -8,7 +8,8 @@ import Notification from './components/Notification.jsx'
 function App() {
 
     const [blogs, setBlogs] = useState([])
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [message, setMessage] = useState(null)
+    const [notifType, setNotifType] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [title, setTitle] = useState('')
@@ -46,10 +47,18 @@ function App() {
             //console.log('user', user)
             setUsername('')
             setPassword('')
-        } catch{
-            setErrorMessage('wrong credentials')
+            setNotifType('success')
+            setMessage('Login successful')
+            
             setTimeout(() => {
-                setErrorMessage(null)
+                setMessage(null)
+            }, 2000)
+        } catch{
+            setNotifType('error')
+            setMessage('wrong username or password')
+            
+            setTimeout(() => {
+                setMessage(null)
             }, 2000)
         }
     }
@@ -92,6 +101,19 @@ function App() {
             author: author,
             url: url
         }
+        if(!title || !author){
+            setNotifType('error')
+            setMessage('Title and author are required')
+            setTimeout(() => {
+                setMessage(null)
+            }, 5000)
+            return
+        }
+        setNotifType('success')
+        setMessage(`A new blog '${newBlog.title}' by ${newBlog.author} has been added`)
+        setTimeout(() => {
+            setMessage(null)
+        }, 5000)
 
         blogService
         .create(newBlog)
@@ -150,7 +172,7 @@ function App() {
 
     return (
         <div>
-            <Notification message = {errorMessage} />
+            <Notification message = {message} type = {notifType} />
             {!user && loginForm()}
             {user && (
                 <div>
