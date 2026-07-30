@@ -4,9 +4,6 @@ import loginService from './services/login.js'
 import noteService from './services/notesService.js'
 import Note from './components/Note.jsx'
 import Notification from './components/Notification.jsx'
-import LoginForm from './components/LoginForm.jsx'
-import NoteForm from './components/NoteForm.jsx'
-import Togglable from './components/Togglable.jsx'
 
 //////////////////////7
 // part 2 d
@@ -15,6 +12,7 @@ import Togglable from './components/Togglable.jsx'
 const App = () => {
   // uses useState function to initialize the piece of state stored in 'notes' with the array of notes passed in props
   const [notes, setNotes] = useState(null) // to initialize as empty array: useState([])
+  const [newNote, setNewNote] = useState('a new note...') // a state variable to sote user-submitted input
   const [showAll, setShowAll] = useState(true) // using this state to enable fintering display functionality
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
@@ -46,21 +44,7 @@ const App = () => {
       return null
     }
 
-
-  // sending data to the server 
-  // creating a function to handle adding new notes
-  const addNote = (noteObject) => {
-    // sending data to the server 
-    noteService
-    .create(noteObject)
-    .then(returnedNote => {
-      setNotes(notes.concat(returnedNote))
-    })
-    // setNotes(notes.concat(noteObject)) // ensures the original array is not changed, by creating a new array with the added note
-    // setNewNote('')
-  }
-
-         // adding button to toggle note importance
+       // adding button to toggle note importance
   const toggleImportanceOf = (id) => {
     const url = `http://localhost:3001/notes/${id}`
     const note = notes.find(n => n.id === id) // used to find the note we want to modify, by searching the notes array for the note with the matching id
@@ -80,6 +64,30 @@ const App = () => {
     })
   } 
 
+  // sending data to the server 
+  // creating a function to handle adding new notes
+  const addNote = (event) => {
+    event.preventDefault() // to prevent the default behavior of the form submission, which is to reload the page
+
+    const noteObject = {
+      content: newNote,
+      important: Math.random() < 0.5 // to randomly assign the importance of the note
+      //id: Math.random() < 0.5, we dont need id property (post task)
+    }
+    // sending data to the server 
+    noteService
+    .create(noteObject)
+    .then(returnedNote => {
+      setNotes(notes.concat(returnedNote))
+      setNewNote('')
+    })
+    // setNotes(notes.concat(noteObject)) // ensures the original array is not changed, by creating a new array with the added note
+    // setNewNote('')
+  }
+  const handleNoteChange = (event) => {
+    console.log(event.target.value)
+    setNewNote(event.target.value)
+  }
 
   const notesToShow = showAll
    ? notes 
@@ -88,16 +96,20 @@ const App = () => {
   // logic for loging in 
   const handleLogin = async (event) => {
     event.preventDefault()
+    
     // Implementation for handling login
     try {
       const user = await loginService.login({ username, password })
       
       // save the details of the logged-in user to the local storage, so that browser doesn't forget and reset the user
       window.localStorage.setItem('loggedNoteAppUser', JSON.stringify(user))
+      
       noteService.setToken(user.token) // the token is set in the notesService, so that it can be used in the headers of the requests to the server
+      
       setUser(user) // the token returned with a successful login is saved to the application's state
       setUsername('')
       setPassword('')
+
     }catch {
       setErrorMessage('wrong credentials')
       setTimeout(() => {
@@ -106,33 +118,38 @@ const App = () => {
     }
   }
 
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
-}
+  const loginForm = () => (
 
-  const loginForm = () => {
-    return (
-      <Togglable buttonLabel = 'login'>
-        <LoginForm 
-          username = {username}
-          password = {password}
-          handleUsernameChange = {({ target }) => setUsername(target.value)}
-          handlePasswordChange = {({ target }) => setPassword(target.value)}
-          handleSubmit = {handleLogin}
+    <form onSubmit = {handleLogin}>
+      <div>
+        <label>
+          username:
+          <input 
+            type = 'text'
+            value = {username}
+            onChange = {({ target}) => setUsername(target.value)}
           />
-      </Togglable>
-    )
-  }
+        </label>
+      </div>
+      <div>
+        <label>
+          password:
+          <input
+            type = 'password'
+            value = {password}
+            onChange = {({ target }) => setPassword(target.value)}
+          />
+        </label>
+        <button type = 'submit'> save </button>
+      </div>
+    </form>
+  )
 
   const noteForm = () => (
-    <Togglable buttonLabel = 'save'>
-      <NoteForm 
-        onSubmit = {addNote}
-        value = {newNote}
-        handleChange = {handleNoteChange}
-      />
-    </Togglable>
+    <form> 
+      <input value = {newNote} onChange = {handleNoteChange}/>
+      <button type = 'submit'> save </button>
+    </form>
   )
 
   return (
@@ -159,11 +176,15 @@ const App = () => {
       <ul>
         {notesToShow.map(note => 
           <Note key={note.id} 
-            note={note}
-            toggleImportance={ () => toggleImportanceOf(note.id)}/>
+          note={note}
+          toggleImportance={ () => toggleImportanceOf(note.id)}/>
         )}
       </ul>
       
+      {/* <form onSubmit={addNote}>
+        <input value = {newNote} onChange={handleNoteChange}/>
+        <button type='submit'>save</button>
+      </form> */}
     </div>
   )
 }
