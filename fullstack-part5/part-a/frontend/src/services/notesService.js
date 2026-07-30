@@ -19,7 +19,7 @@ const getAll = () => {
 const create = newObject => {
     // send the token in the headers of the request to the server
     const config = {
-        headers: {Authentication: token}
+        headers: {Authorization: token}
     }
     const request = axios.post(baseUrl, newObject, config) // header given to axios
     return request.then(response => response.data)
