@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useImperativeHandle } from 'react'
 
 const Togglable = (props) => {
     const [visible, setVisible] = useState(false) // for tracking whethere the content is shown or hidden
@@ -17,6 +17,11 @@ const Togglable = (props) => {
     const toggleVisibility = () => {
         setVisible(!visible)
     }
+
+    // a hook to make its toggleVisibility function available outside of the component
+    useImperativeHandle(props.ref, () => {
+        return { toggleVisibility }
+    })
     return (
 
         <div>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 const NoteForm = ({ createNote }) => {
-    const [newNote, setNewNote] = useState('a new note...') // a state variable to sote user-submitted input
+    const [newNote, setNewNote] = useState('') // a state variable to sote user-submitted input
 
     const addNote = (event) => {
         event.preventDefault()
