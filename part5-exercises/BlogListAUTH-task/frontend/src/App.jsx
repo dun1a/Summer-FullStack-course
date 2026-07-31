@@ -4,6 +4,8 @@ import blogService from './services/blogService.js'
 import loginService from './services/loginService.js'
 import BlogsList from './components/BlogsList.jsx'
 import Notification from './components/Notification.jsx'
+import Togglable from './components/Togglable.jsx'
+import BlogForm from './components/BlogForm.jsx'
 
 function App() {
 
@@ -127,41 +129,17 @@ function App() {
 
     const blogForm = () => {
         return (
-            <form onSubmit = {handleAddBlog}>
-                <h2> Create a new blog </h2>
-                <div>
-                    <label>
-                        title: 
-                        <input
-                            type = 'text'
-                            value = {title}
-                            onChange = {({ target }) => setTitle(target.value)}
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        author:
-                        <input 
-                            type = 'text'
-                            value = {author}
-                            onChange = {({ target }) => setAuthor(target.value)}
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        url:
-                        <input 
-                            type = 'text'
-                            value = {url}
-                            onChange = {({ target}) => setUrl(target.value)}
-                        />
-                    </label>
-                </div>
-                <button type = 'submit'> save</button>
-            
-            </form>
+            <Togglable buttonLabel = 'create new blog'>
+                <BlogForm
+                    onSubmit = {handleAddBlog}
+                    value1 = {title}
+                    value2 = {author}
+                    value3 = {url}
+                    handleChange1 = {({ target }) => setTitle(target.value)}
+                    handleChange2 = {({ target }) => setAuthor(target.value)}
+                    handleChange3 = {({ target }) => setUrl(target.value)}
+                />
+            </Togglable>
         )
     }
  
