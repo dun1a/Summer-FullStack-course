@@ -94,29 +94,28 @@ function App() {
         )
     }
 
-    const handleAddBlog = (event) => {
-        event.preventDefault()
-        console.log('adding blog', title)
+    const handleAddBlog = (newBlog) => {
+        console.log('adding blog', newBlog.title)
 
-        const newBlog = {
-            title: title,
-            author: author,
-            url: url
-        }
-        if(!title || !author){
+        if(!newBlog.title || !newBlog.author){
             setNotifType('error')
             setMessage('Title and author are required')
             setTimeout(() => {
                 setMessage(null)
             }, 5000)
-            return
+        return
         }
+
         setNotifType('success')
         setMessage(`A new blog '${newBlog.title}' by ${newBlog.author} has been added`)
         setTimeout(() => {
             setMessage(null)
         }, 5000)
 
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+        
         blogService
         .create(newBlog)
         .then(returnedBlog => {
@@ -127,29 +126,11 @@ function App() {
         })
     }
 
-    const handleTitleChange = (event) => {
-        setTitle(event.target.value)
-    }
-    
-    const handleAuthorChange = (event) => {
-        setAuthor(event.target.value)
-    }
-
-    const handleUrlChange = (event) => {
-        setUrl(event.target.value)
-    }   
-
     const blogForm = () => {
         return (
             <Togglable buttonLabel = 'create new blog'>
                 <BlogForm
-                    onSubmit = {handleAddBlog}
-                    title = {title}
-                    author = {author}
-                    url = {url}
-                    handleTitleChange = {handleTitleChange}
-                    handleAuthorChange = {handleAuthorChange}
-                    handleUrlChange = {handleUrlChange}
+                    createBlog = {handleAddBlog}
                 />
             </Togglable>
         )
