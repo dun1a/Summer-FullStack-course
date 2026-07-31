@@ -127,17 +127,29 @@ function App() {
         })
     }
 
+    const handleTitleChange = (event) => {
+        setTitle(event.target.value)
+    }
+    
+    const handleAuthorChange = (event) => {
+        setAuthor(event.target.value)
+    }
+
+    const handleUrlChange = (event) => {
+        setUrl(event.target.value)
+    }   
+
     const blogForm = () => {
         return (
             <Togglable buttonLabel = 'create new blog'>
                 <BlogForm
                     onSubmit = {handleAddBlog}
-                    value1 = {title}
-                    value2 = {author}
-                    value3 = {url}
-                    handleChange1 = {({ target }) => setTitle(target.value)}
-                    handleChange2 = {({ target }) => setAuthor(target.value)}
-                    handleChange3 = {({ target }) => setUrl(target.value)}
+                    title = {title}
+                    author = {author}
+                    url = {url}
+                    handleTitleChange = {handleTitleChange}
+                    handleAuthorChange = {handleAuthorChange}
+                    handleUrlChange = {handleUrlChange}
                 />
             </Togglable>
         )
