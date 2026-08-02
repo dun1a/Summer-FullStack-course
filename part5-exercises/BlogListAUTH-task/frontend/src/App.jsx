@@ -139,6 +139,20 @@ function App() {
         })
     }
 
+    const deleteBlog = (id) => {
+        console.log('deleting blog with id', id)
+
+        if(!window.confirm('Are you sure you want to delete this blog?')){
+            return
+        }
+
+        blogService
+        .deleteBlog(id)
+        .then(() => {
+            setBlogs(blogs.filter(blog => blog.id !== id))
+        })
+    }
+
 
     const blogForm = () => {
         return (
@@ -163,7 +177,7 @@ function App() {
                 <div>
                     <p>{user.name} Logged in</p> 
                     <button onClick={logOut}>Logout</button>
-                    <BlogsList blogs = {blogs} updateLike={updateLike}/>
+                    <BlogsList blogs = {blogs} updateLike={updateLike} deleteBlog={deleteBlog}/>
                     {blogForm()}
                 </div>
             )}

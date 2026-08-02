@@ -1,6 +1,6 @@
 import Blog from './Blog.jsx'
 
-const BlogList = ({ blogs, updateLike }) => {
+const BlogList = ({ blogs, updateLike, deleteBlog }) => {
 
     const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes) 
 
@@ -12,7 +12,8 @@ const BlogList = ({ blogs, updateLike }) => {
                 <Blog 
                     key = {blog.id} 
                     blog = {blog} 
-                    updateLike = {updateLike} /> // passing the updateLike function to each Blog component
+                    updateLike = {updateLike}
+                    deleteBlog = {deleteBlog} /> // passing the updateLike function to each Blog component
             ))}
         </div>
     )

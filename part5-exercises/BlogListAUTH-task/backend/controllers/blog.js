@@ -68,11 +68,12 @@ blogRouter.get('/:id', (request, response, next) => {
 
 
 // delete blog operation but blog can only be deleted by the user who created it
-blogRouter.delete('/:id', async (request, response) => {
+blogRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
     const blog = await Blog.findById(request.params.id)
 
     const user = await User.findById(request.user.id)
 
+    console.log('blog id', blog.id)
     if(!user){
         return response.status(404).json({
             error: 'user not found'
