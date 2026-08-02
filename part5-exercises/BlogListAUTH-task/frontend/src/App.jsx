@@ -115,7 +115,7 @@ function App() {
         setTitle('')
         setAuthor('')
         setUrl('')
-        
+
         blogService
         .create(newBlog)
         .then(returnedBlog => {
@@ -125,6 +125,20 @@ function App() {
             setUrl('')
         })
     }
+
+    const updateLike = (id) => {
+
+        // find the blog to update first
+        const blogToUpdate = blogs.find(blog => blog.id === id)
+        const updatedBlog = {...blogToUpdate, likes: blogToUpdate.likes + 1}
+        
+        blogService
+        .update(id, updatedBlog)
+        .then(returnedBlog => {
+            setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+        })
+    }
+
 
     const blogForm = () => {
         return (
@@ -149,7 +163,7 @@ function App() {
                 <div>
                     <p>{user.name} Logged in</p> 
                     <button onClick={logOut}>Logout</button>
-                    <BlogsList blogs = {blogs} />
+                    <BlogsList blogs = {blogs} updateLike={updateLike}/>
                     {blogForm()}
                 </div>
             )}

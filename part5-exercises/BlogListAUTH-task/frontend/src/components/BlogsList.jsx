@@ -1,6 +1,7 @@
 import Blog from './Blog.jsx'
 
-const BlogList = ({ blogs }) => {
+const BlogList = ({ blogs, updateLike }) => {
+
 
     return (
         <div>
@@ -8,8 +9,11 @@ const BlogList = ({ blogs }) => {
             <h2> Blogs </h2>
 
             {blogs.map(blog => (
-                <Blog key = {blog.id} blog = {blog} />
-            ) )}
+                <Blog 
+                    key = {blog.id} 
+                    blog = {blog} 
+                    updateLike = {updateLike} /> // passing the updateLike function to each Blog component
+            ))}
         </div>
     )
 }
