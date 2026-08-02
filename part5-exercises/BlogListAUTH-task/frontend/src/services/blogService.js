@@ -5,55 +5,55 @@ const baseUrl = '/api/blogs'
 let token = null
 
 const setToken = newToken => {
-    token = `Bearer ${newToken}`
+  token = `Bearer ${newToken}`
 }
 
 const initialBlogs = [
-    {
-        title: 'React patterns',
-        author: 'John Doe',
-        url: 'https://example.com/react-patterns',
-        likes:7
-    }
+  {
+    title: 'React patterns',
+    author: 'John Doe',
+    url: 'https://example.com/react-patterns',
+    likes:7
+  }
 ]
 
 const getAll = () => {
-    const config = {
-        headers: {Authorization: token}
-    }
+  const config = {
+    headers: { Authorization: token }
+  }
 
-    const request = axios.get(baseUrl, config)
-    return request.then(response => response.data)
+  const request = axios.get(baseUrl, config)
+  return request.then(response => response.data)
 }
 
 const create = (newObject) => {
-    const config = {
-        headers: {Authorization: token}
-    }
-    const request = axios.post(baseUrl, newObject, config)
-    return request.then(response => response.data)
+  const config = {
+    headers: { Authorization: token }
+  }
+  const request = axios.post(baseUrl, newObject, config)
+  return request.then(response => response.data)
 }
 
 const update = (id, blogObject) => {
-    const response = axios.put(`${baseUrl}/${id}`, blogObject)
-    return response.then(response => response.data)
+  const response = axios.put(`${baseUrl}/${id}`, blogObject)
+  return response.then(response => response.data)
 }
 
 const deleteBlog = (id) => {
-    const config = {
-        headers: {Authorization: token}
-    }
+  const config = {
+    headers: { Authorization: token }
+  }
 
-    const request = axios.delete(`${baseUrl}/${id}`, config)
-    console.log('sending delete request for id', id)
-    return request.then(response => response.data)
+  const request = axios.delete(`${baseUrl}/${id}`, config)
+  console.log('sending delete request for id', id)
+  return request.then(response => response.data)
 }
 
 export default {
-    getAll,
-    create,
-    update,
-    deleteBlog,
-    initialBlogs,
-    setToken
+  getAll,
+  create,
+  update,
+  deleteBlog,
+  initialBlogs,
+  setToken
 }

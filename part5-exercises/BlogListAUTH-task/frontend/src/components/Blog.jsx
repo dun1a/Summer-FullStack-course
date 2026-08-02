@@ -1,42 +1,42 @@
-import {useState} from 'react'
+import { useState } from 'react'
 
 const Blog = ({ blog, updateLike, deleteBlog }) => {
 
-    const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false)
 
-     const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: 'solid',
-        borderWidth: 2,
-        marginBottom: 5
-    }
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 2,
+    marginBottom: 5
+  }
 
-    const hideWHenVisible = {display: visible ? 'none' : ''}
-    const shoWhenVisible = {display: visible ? '' : 'none'}
+  //const hideWHenVisible = { display: visible ? 'none' : '' }
+  const shoWhenVisible = { display: visible ? '' : 'none' }
 
-    const toggleVisibility = () => {
-        setVisible(!visible)
-    }
+  const toggleVisibility = () => {
+    setVisible(!visible)
+  }
 
-    const viewHideButton = visible ? 'hide' : 'view'
+  const viewHideButton = visible ? 'hide' : 'view'
 
 
-    return (
-        <div style = {blogStyle}>
-            <p> {blog.title} <button onClick={toggleVisibility}> {viewHideButton} </button> </p>
+  return (
+    <div style = {blogStyle}>
+      <p> {blog.title} <button onClick={toggleVisibility}> {viewHideButton} </button> </p>
 
-            {visible && (
-                <div style = {shoWhenVisible}>
-                    <p> Author: {blog.author} </p>
-                    <p> URL: {blog.url} </p>
-                    <p> Likes: {blog.likes} <button onClick={() => updateLike(blog.id)}> like </button></p>
-                    <button onClick = {() => deleteBlog(blog.id)}> delete </button>
-                </div>
-            )}
-        
+      {visible && (
+        <div style = {shoWhenVisible}>
+          <p> Author: {blog.author} </p>
+          <p> URL: {blog.url} </p>
+          <p> Likes: {blog.likes} <button onClick={() => updateLike(blog.id)}> like </button></p>
+          <button onClick = {() => deleteBlog(blog.id)}> delete </button>
         </div>
-    )
+      )}
+
+    </div>
+  )
 
 }
 

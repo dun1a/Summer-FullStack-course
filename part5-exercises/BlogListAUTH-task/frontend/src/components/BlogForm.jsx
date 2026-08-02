@@ -25,7 +25,7 @@
 // }
 
 
-// const BlogForm = ({ 
+// const BlogForm = ({
 //     onSubmit,
 //     title, handleTitleChange,
 //     author, handleAuthorChange,
@@ -56,47 +56,51 @@
 //     )
 // }
 
-import {useState} from 'react'
+import { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
 
-    const [title, setTitle] = useState('')
-    const [author, setAuthor] = useState('')
-    const [url, setUrl] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
-    const handleAddBlog = (event) => {
-        event.preventDefault()
+  const handleAddBlog = (event) => {
+    event.preventDefault()
 
-        createBlog({
-            title: title,
-            author: author,
-            url: url
-        })
-    }
+    createBlog({
+      title: title,
+      author: author,
+      url: url
+    })
 
-    return (
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+
+  return (
+    <div>
+      <h2> Create a new blog </h2>
+      <form onSubmit = {handleAddBlog}>
         <div>
-            <h2> Create a new blog </h2>
-            <form onSubmit = {handleAddBlog}>
-                <div>
-                    <label>title:
-                    <input value = {title} onChange = {event => setTitle(event.target.value)} />
-                    </label>
-                </div>
-                <div>
-                    <label>author:
-                    <input value = {author} onChange = {event => setAuthor(event.target.value)} />
-                    </label>
-                </div>
-                <div>
-                    <label>url:
-                    <input value = {url} onChange = {event => setUrl(event.target.value)} />
-                    </label>
-                </div>
-               <button type = 'submit'> save </button>
-            </form>
+          <label>title:
+            <input value = {title} onChange = {event => setTitle(event.target.value)} />
+          </label>
         </div>
-    )
+        <div>
+          <label>author:
+            <input value = {author} onChange = {event => setAuthor(event.target.value)} />
+          </label>
+        </div>
+        <div>
+          <label>url:
+            <input value = {url} onChange = {event => setUrl(event.target.value)} />
+          </label>
+        </div>
+        <button type = 'submit'> save </button>
+      </form>
+    </div>
+  )
 }
 
 
