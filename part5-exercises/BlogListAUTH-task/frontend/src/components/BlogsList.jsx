@@ -6,7 +6,6 @@ const BlogList = ({ blogs, updateLike }) => {
 
     return (
         <div>
-
             <h2> Blogs </h2>
 
             {sortedBlogs.map(blog => (
